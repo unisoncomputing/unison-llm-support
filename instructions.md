@@ -1,6 +1,6 @@
 # Rules
 
-Follow the Unison Programming Language Guide
+Follow the [Unison Programming Language Guide](./unison-language-guide.md)
 
 Use the Unison programming language for all code unless otherwise specified.
 
