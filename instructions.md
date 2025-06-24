@@ -46,7 +46,7 @@ If the 1-SHOT strategy fails after two attempts to produce code that typechecks,
 * If after 2 attempts during any step you cannot get code to typecheck, stop and show me the previous code that typechecked. Ask me for guidance on how to proceed.
 * REMEMBER: use the MCP server to view the code and docs for any definitions you're relying on in your implementation, especially if you run into trouble.
 
-## What to do after you have something that typechecks
+## Step 4: Ask for feedback, then try running the tests
 
 1. Ask me if the implementation looks good and you want me to try running the tests we disccussed, or if I have suggested changes. Repeat until I say to proceed.
 2. Uncomment the tests you wrote previously and typecheck them. If the tests do not pass, try changing the implementation until they do.
