@@ -1,11 +1,62 @@
 # Rules
 
-Please follow the [Unison Programming Language Guide](./unison-language-guide.md). You should use the Unison programming language for all code unless otherwise specified.
+Please follow the [Unison Programming Language Guide](./unison-language-guide.md). You should use the Unison programming language for all code unless otherwise specified. @unison-language-guide.md
 
-To assist me with writing code, you'll operate in one of two modes:
+To assist me with writing code, you'll operate in one of three modes:
 
+* The DISCOVERY mode is used when searching for libraries on Unison Share that may be helpful for a task.
+* The LEARNING mode is for familiarizing yourself with a library or codebase, in preparation for writing or editing code or answering questions about the library. If I ask you to learn about a library or familiarize yourself with it, use this mode. You can also choose to dynamically enter this mode as part of a coding task, if you find you are unfamiliar with 
 * The BASIC mode is for somewhat narrow, small, or well-defined tasks. For these, use the BASIC mode instructions, defined below.
 * The DEEP WORK mode is for tasks which may involve a fair amount of code and which are not well defined. For these, follow the DEEP WORK mode instructions below.
+
+## DISCOVERY mode instructions
+
+Follow these steps to discover libraries for use:
+
+1. Search for relevant libraries on Unison Share using the share-project-search MCP command
+2. For each library that seems relevant, you can may view its README using the MCP command share-project-readme
+3. If after reading the README, you think it seems relevant, provide me with a link to the library and ask if I'd like to lib-install it.
+
+After installing it, you should ask if it's okay for you to enter LEARNING (a library) mode below so you can better assist me in writing code for that library.
+
+## LEARNING mode instructions
+
+### LEARNING (a library), steps:
+
+PREREQUISITE: first, check to see if the library you're asked to learn is the current project. If so, use following instructions:
+
+#### LEARNING (the current library) steps:
+
+1. Tell me that you're learning about the current library.
+2. Use the `docs` command to view the README of the current library. (It may be called "Readme" instead of "README")
+3. Use the `list-project-definitions` command to view function signatures of all definitions in the library.
+4. Use the LEARNING (single definition) steps below, as needed, to understand any of the definitions mentioned in the README and/or which are listed in `list-project-definitions`.
+
+Work breadth-first, and don't invoke the LEARNING (single definition) procedure more than 30 times. You can always dig deeper later, as needed.
+
+#### LEARNING (another library) steps:
+
+1. Tell me that you're making sure the library is already installed in the project/branch. Tell me what project branch you're referring to.
+2. Use the `list-project-libraries` command to find out about all the libraries installed for a project.
+3. Use the `docs` command to view the README of the project. (It may be called "Readme" instead of "README")
+4. Use the `list-library-definitions` command to view function signatures of all definitions in the library.
+4. Use the LEARNING (single definition) steps below, as needed, to understand any of the definitions mentioned in the README and/or which are listed in `list-library-definitions`. 
+
+Work breadth-first, and don't invoke the LEARNING (single definition) procedure more than 30 times. You can always dig deeper later, as needed.
+
+### LEARNING (single definition) steps:
+
+To learn about a single definition:
+
+1. First, tell me that you're going to read that definition's documentation, source code, and explore related definitions via the dependency graph. Then proceed to:
+2. Use `docs` MCP action to read its documentation.
+3. (optional) Use `view-definitions` MCP action to view its source. 
+4. (optional) Use `list-definition-dependencies` to get the dependencies of a definition. You can optionally use LEARNING (single definition) on these, if needed. 
+5. (optional) Use `list-definition-dependents` to find places where a definition is used. You can optionally use LEARNING (single definition) on each of these, if needed.
+
+Steps 3, 4 and 5 are optional. If a definition's usage is clear enough from its docs, you may stop there. You can look at its source, its dependencies, or its dependents to learn about related definitions. Generally, if I'm going to be modifying a definition or creating a related definition, I will look at the source code. If I'm just calling or using a definition, I might just read its docs and its signature. 
+
+Example, if the definition is `List.frobnicate`, use `view-definitions List.frobnicate` and then `docs List.frobnicate`.
 
 ## BASIC mode instructions 
 
@@ -13,17 +64,19 @@ These instructions are designed to make sure that you understand my intent befor
 
 ### BASIC mode, step 1: before writing any code: confirm types and signatures
 
-0. If code involves new data types or abilities, confirm the data declarations with me before proceeding.
-1. Confirm type signatures with me before generating any code.
-2. If possible, suggest a few simple examples of inputs and outputs for the function being implemented. Confirm that these are what I expect, then add these as a commented out test> watch expression. We will uncomment them later.
+1. If code involves new data types or abilities, confirm the data declarations with me before proceeding.
+2. Confirm type signatures with me before generating any code.
+3. If possible, suggest a few simple examples of inputs and outputs for the function being implemented. Confirm that these are what I expect, then add these as a commented out test> watch expression. We will uncomment them later.
 
 Do not proceed to the next step until both these are confirmed.
 
+I may tell you to skip checks and proceed directly to implementation, but if I don't say otherwise, proceed to step 2.
+
 ### BASIC mode, step 2: see if similar functions exist
 
-Using the MCP server, search by type for functions on Unison Share with the required signature. You can also search for definitions by name.
+Using the MCP server, search by type for functions on Unison Share with the required signature. You can also search for definitions in the local codebase by name.
 
-You can use the MCP server to`view` to view a function or a type, and `docs` to read its docs. Use these to help find related functions to the query.
+You can use the MCP server to `view` to view a function or a type, and `docs` to read its docs. Use these to help find related functions to the query.
 
 Provide links to functions on Share and if a similar function already exists, ask if I'd like to just use that, or to proceed with an implementation.
 
@@ -35,9 +88,7 @@ Now that we've agreed on the signature of the functions and have a few test case
 
 For both 1-SHOT and USER-GUIDED, code MUST typecheck before being shown to me. I do NOT want to see any code that doesn't typecheck. You will use the Unison MCP server to typecheck all code you show me.
 
-You MAY use the MCP server to`view` to view a function or a type, and `docs` to read its docs. Use these to help with understanding how to use functions within code you are generating.
-
-If you're writing code that works with a type, you should probably use the MCP server to view that type and its docs. 
+You MAY use the LEARNING (single definition) steps to learn about types and functions you are trying to use in your implementation. Generally, if you are writing code against a type, you should view that type and read its docs using the MCP server. 
 
 #### BASIC mode: the 1-SHOT strategy
 
@@ -45,7 +96,9 @@ The 1-SHOT strategy: If something seems simple enough, try implementing it direc
 
 MAKE SURE IT PASSES THE TESTS.
 
-Ask me if the implementation looks good or if changes are requested for either the tests or the implementation. Repeat until I say it looks good.
+Do NOT modify the tests in order to get them to pass. If you think the tests are incorrect and want to change them, ask me first.
+
+Once you have a typechecking implementation that passes the tests, ask me if the implementation looks good or if changes are requested for either the tests or the implementation. Repeat until I say it looks good.
 
 If the 1-SHOT strategy fails after a few attempts to produce code that typechecks and passes the tests, then start over using the USER-GUIDED implementation strategy to fill in a function's implementation.
 
@@ -53,11 +106,24 @@ If the 1-SHOT strategy fails after a few attempts to produce code that typecheck
 
 While keeping the tests commented out:
 
-* Write a skeleton implementation of the function that does at most 1 level of pattern matching and calls `todo 1` or `todo 2`, `todo 3`, etc for the implementation of branches and/or helper functions. Show me this code in a markdown block if it typechecks. Ask me if it looks okay and which of the numbered `todo` you should try filling in next. Repeat.
-* If after a few attempts during any step you cannot get code to typecheck, stop and show me the previous code that typechecked. Ask me for guidance on how to proceed.
-* REMEMBER: use the MCP server to view the code and docs for any definitions you're relying on in your implementation, especially if you run into trouble.
-* Once the implementation has no more todos, ask if I have any feedback.
-* Once I say the implementation looks good, uncomment the tests and make sure the tests pass. If there are failures, try to fix them. If after a few attempts there are still failures, ask me for guidance.
+1. Write a skeleton implementation of the function that does at most 1 level of pattern matching and calls `todo 1` or `todo 2`, `todo 3`, etc for the implementation of branches and/or helper functions. Show me this code in a markdown block if it typechecks. Ask me if it looks okay and which of the numbered `todo` you should try filling in next. Repeat.
+2. If after a few attempts during any step you cannot get code to typecheck, stop and show me the previous code that typechecked. Ask me for guidance on how to proceed.
+3. REMEMBER: use the MCP server to view the code and docs for any definitions you're relying on in your implementation, especially if you run into trouble.
+4. Once the implementation has no more todos, ask if I have any feedback.
+5. Once I say the implementation looks good, uncomment the tests and make sure the tests pass. If there are failures, try to fix them. If after a few attempts there are still failures, ask me for guidance.
+
+Example of a skeleton implementation:
+
+```
+type Tree a = Empty | Branch a [Tree a]
+
+Tree.frobnicate : Tree a -> Nat
+Tree.frobnicate t = match t with 
+  Empty -> todo 1
+  Branch -> todo 2
+```
+
+You would show me this code and ask me which todo to fill in next, and if I have any guidance.
 
 ## DEEP WORK mode
 
@@ -73,24 +139,41 @@ Your goal is to come up with the following ASSETS:
 1. You will ask me questions about the task, one at a time. Prefer yes / no questions to open ended questions. If after an answer, one of the assets (a data declarations, ability declarations, function signature, test case, implementation strategy, etc) becomes clear, show me the code or docs and ask me if it looks okay before continuing.
 2. Repeat 1 until you feel you have a complete set of requirements. Then give a summary and a high-level implementation plan. Ask me if it looks okay before continuing. Repeat until I say it sounds good, then move to DEEP WORK, Step 2: Implementation
 
-DO NOT proceed to implementation until I have said to do so.
+### DEEP WORK, MANDATORY CHECKPOINT
+
+After completing requirements gathering, you MUST:
+
+1. State "DEEP WORK Step 1 complete"
+2. Present the complete requirements summary
+3. Ask: "Do you approve this design? Should I proceed to Step 2: Implementation?"
+4. WAIT for explicit "yes" or "proceed" before continuing
+5. If I don't explicitly approve, ask clarifying questions
 
 ### DEEP WORK, step 2: Implementation
 
 Now that we've agreed on the requirements in step 1, you can then proceed to implementation. You will work in a more structured way to make it more likely that you'll succeed, and to make it easier for me to provide support or guidance if you get stuck:
 
-* First, you will write any data declarations or ability declarations. You will make sure these typecheck before proceeding. There is no point in trying to write code against a data type that is ill-defined or has type or kind errors. Let the code flow from the data types.
-* Next you will implement the function signatures we agreed on during the requirements gathering phase. You'll use the following strategy:
+#### Steps to follow during implementation
+
+1. First, you will write any data declarations or ability declarations. You will make sure these typecheck before proceeding. There is no point in trying to write code against a data type that is ill-defined or has type or kind errors. Let the code flow from the data types.
+2. Next you will implement the function signatures we agreed on during the requirements gathering phase. You'll use the following strategy:
    a) First, write the type signatures down, but for now, leave the implementations as `todo 1`, `todo 2`, etc.
-   b) Next, one at a time, fill in the todos. Use either the 1-SHOT or USER-GUIDED strategy, as you see fit.
+   b) ONE AT A TIME, fill in the todos. Use either the 1-SHOT or USER-GUIDED strategy, as you see fit.
    c) Once a function typechecks, you can try uncommenting relevant tests, or you can wait until the end to uncomment tests.
+   d) DO NOT start implementing the next function until the current function typechecks.
 * By the end, you should have no more todos, implementations that typecheck, and passing tests.
 
 Feel free to introduce helper functions if needed. By default, helper functions needed for a definition `foo` go in `foo.internal.<helperFunctionName>`. Generic utilities go in `util` namespace.
 
-To be clear, do NOT proceed to writing more code if the function you've written so far doesn't typecheck.
+#### If you make mistakes
 
-If you are having trouble, you may want to wait on uncommenting certain tests until you have several definitions implemented and typechecking.
+If you are having trouble, work in smaller pieces:
+
+a) Don't write a bunch of code, then try to get it to typecheck. Write and typecheck a function at a time. 
+b) If the function's implementation is big, and you can't get it all compiling at once, you can replace parts of the implementation with a call to `todo`, then ask for my help, as in the USER-GUIDED strategy.
+c) NEVER write more code if the code you've just written doesn't typecheck.
+
+You MAY want to wait on uncommenting certain tests until you have several definitions implemented and typechecking.
 
 If you're having trouble with an API or some code after a few attempts, you can stop and ask me for guidance.
 
@@ -128,3 +211,15 @@ List.reverse = foldLeft (acc a -> a +: acc) []
 ```
 
 This will print out `[3,2,1]` for that watch expression.
+
+## REQUIREMENTS: you must output the code you've written, and that code must typecheck
+
+ANYTIME you write code on my behalf, it needs to go to a file (you may suggest a file name), or as an artifact that I can copy/paste into a file, or if it is short, shown to me onscreen.
+
+The code you show me / output to the file / produce as an artifact MUST typecheck. 
+
+That is: you will first typecheck the code, then output it VERBATIM.
+
+You will never output code that has not been typechecked.
+
+To be clear, you are not done just because the code typechecks: that code must be shown to me, put in a file, or produced as an artifact so that I can use it. I cannot easily see the tool call invocations and the code there is not well-formatted for human consumption.
