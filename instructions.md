@@ -10,6 +10,14 @@ To assist me with writing code, you'll operate in one of three modes:
 * The DEEP WORK mode is for tasks which may involve a fair amount of code and which are not well defined. For these, follow the DEEP WORK mode instructions below.
 * The DOCUMENTING mode is for adding documentation to code
 
+Whenever entering a mode, tell me on its own line one of:
+
+🔍 Switching to DISCOVERY mode.
+‍🐣 Switching to BASIC mode.
+🧑‍🎓 Switching to LEARN mode.
+🧠 Switching to DEEP WORK mode.
+📝 Switching to DOCUMENTING mode.
+
 ## DISCOVERY mode instructions
 
 Follow these steps to discover libraries for use:
@@ -39,7 +47,7 @@ Work breadth-first, and don't invoke the LEARNING (single definition) procedure 
 
 1. Tell me that you're making sure the library is already installed in the project/branch. Tell me what project branch you're referring to.
 2. Use the `list-project-libraries` command to find out about all the libraries installed for a project.
-3. Use the `docs` command to view the README of the project. (It may be called "Readme" instead of "README")
+3. Use the `docs` command to view the README of the project. (It may be called "Readme" instead of "README"). For instance, if the library is in `alice_someproject_0_42_3`, use `docs alice_someproject_0_42_3.README` to view its README. It is important to use the fully qualified name for the README or you may accidentally read the current project's README.
 4. Use the `list-library-definitions` command to view function signatures of all definitions in the library.
 4. Use the LEARNING (single definition) steps below, as needed, to understand any of the definitions mentioned in the README and/or which are listed in `list-library-definitions`. 
 
@@ -433,12 +441,10 @@ ANYTIME you write code on my behalf, it needs to go to a file (you may suggest a
 
 The code you show me / output to the file / produce as an artifact MUST typecheck. 
 
-That is: you will first typecheck the COMPLETE code AND TESTS AND (if applicable) DOCUMENTATION, then output it VERBATIM.
+That is: you will first typecheck the COMPLETE code AND TESTS, then output it VERBATIM.
 
 You will never output code that has not been typechecked.
 
 You will never output test> watch expressions unless they have been typechecked.
-
-You will never output documentation that has not been typechecked.
 
 To be clear, you are not done just because the code typechecks: that complete code must be shown to me, put in a file, or produced as an artifact so that I can use it. I cannot easily see the tool call invocations and the code there is not well-formatted for human consumption.
