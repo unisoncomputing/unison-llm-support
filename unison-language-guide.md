@@ -21,9 +21,7 @@ factorial n = product (range 1 (n + 1))
 
 Binary operators are just functions written with infix syntax like `expr1 * expr2` or `expr1 Text.++ expr2`. They are just like any other, except that their unqualified name isn't alphanumeric operator, which tells the parser to parse them with infix syntax.
 
-Any operator can also be written with prefix syntax. So `1 Nat.+ 1` can also be written as `(Nat.+) 1 1`.
-
-The prefix syntax is also how to pass an operator to another function. For instance:
+Any operator can also be written with prefix syntax. So `1 Nat.+ 1` can also be written as `(Nat.+) 1 1`. But the only time you should use this prefix syntax is when passing an operator as an argument to another function. For instance:
 
 ```
 sum = List.foldLeft (Nat.+) 0
@@ -36,6 +34,7 @@ IMPORTANT: when passing an operator as an argument to a higher order function, s
 ### Currying and Multiple Arguments
 
 Functions in Unison are automatically curried. A function type like `Nat -> Nat -> Nat` can be thought of as either:
+
 - A function taking two natural numbers
 - A function taking one natural number and returning a function of type `Nat -> Nat`
 
@@ -67,6 +66,8 @@ INCORRECT:
 List.zipWith (x -> y -> x*10 + y) [1,2,3] [4,5]
 ```
 
+Once again, a multi-argument lambda just separates the arguments by spaces.
+
 ## Type Variables and Quantification
 
 In Unison, lowercase variables in type signatures are implicitly universally quantified. You can also explicitly quantify variables using `forall`:
@@ -79,7 +80,7 @@ map : (a -> b) -> [a] -> [b]
 map : forall a b . (a -> b) -> [a] -> [b]
 ```
 
-Prefer implicit quantification, not explicit `forall`.
+Prefer implicit quantification, not explicit `forall`. Only use `forall` when defining higher-rank functions which take a universally quantified function as an argument.
 
 ## Algebraic Data Types
 
@@ -100,7 +101,7 @@ Optional.map f o = match o with
   Some a -> Some (f a)
 ```
 
-#### Using `cases`
+#### Prefer using `cases` where possible
 
 A function that immediately pattern matches on its last argument, like so:
 
@@ -120,7 +121,7 @@ Optional.map f = cases
 
 Prefer this style when applicable.
 
-The `cases` syntax is also handy when the argument to a function is a tuple, for instance:
+The `cases` syntax is also handy when the argument to a function is a tuple, to destructure the tuple, for instance:
 
 ```
 List.zip xs yz |> List.map (cases (x,y) -> frobnicate x y "hello")
@@ -184,13 +185,15 @@ List.head as = match as with
 
 ### Important naming convention
 
-Note that unlike Haskell or Elm, Unison's `Optional` type uses `None` and `Some` as constructors (not `Nothing` and `Just`). 
+Note that UNLIKE Haskell or Elm, Unison's `Optional` type uses `None` and `Some` as constructors (not `Nothing` and `Just`). 
+
 Becoming familiar with Unison's standard library naming conventions is important.
 
 Use short variable names for helper functions:
 
 * For instance: `rem` instead of `remainder`, and `acc` instead of `accumulator`.
 * If you need to write a helper function loop using recursion, call the recursive function `go` or `loop`.
+* Use `f` or `g` as the name for a generic function passed to a higher-order function like `List.map`
 
 ## Lists
 
@@ -220,7 +223,7 @@ IMPORTANT: DO NOT build up lists in reverse order, then call `List.reverse` at t
 
 ## Use accumulating parameters and tail recursive functions for looping
 
-Tail recursion is the sole looping construct. Just write recursive functions, but write them tail recursive with an accumulating parameter. For instance, here is a function for summing a list:
+Tail recursion is the sole looping construct in Unison. Just write recursive functions, but write them tail recursive with an accumulating parameter. For instance, here is a function for summing a list:
 
 ```
 Nat.sum : [Nat] -> Nat
@@ -399,6 +402,7 @@ type Employee = { name : Text, age : Nat }
 ```
 
 This generates accessor functions and updaters:
+
 - `Employee.name : Employee -> Text`
 - `Employee.age : Employee -> Nat`
 - `Employee.name.set : Text -> Employee -> Employee`
@@ -709,32 +713,40 @@ test> Nat.tests.props = test.verify do
     ensureEqual (n * m) (m * n)
 ```
 
-Tests for a function or type `foo` should always be named `foo.tests.<test-name>`.
+REQUIREMENT: Tests for a function or type `foo` should always be named `foo.tests.<test-name>`.
 
 ## Lazy Evaluation
 
-Unison is strict by default. Laziness can be achieved explicitly with `'` (outside functions) and `do` (within functions):
+Unison is strict by default. Laziness can be achieved using `do` (short for "delayed operation", NOT the same as Haskell's `do` keyword): 
 
 ```
--- Outside a function, create a thunk with '
-lazyComputation : '(expensive computation)
-lazyComputation = '(expensiveFunction arg1 arg2)
-
 -- Inside a function, use do
-stream : '{Stream Nat} ()
-stream = do
-  Each.iterate ((+) 1) 0 Stream.emit
+nats : '{Stream Nat} ()
+nats = do 
+  Stream.emit 1
+  Stream.emit 2
+  Stream.emit 3
+```
+
+You can use `(do someExpr)` to put a delayed computation anywhere you want (say, as the argument to a function), or if a `do` is the last argument to a function, you can leave off the parentheses:
+
+PREFERRED: 
+
+```
+forkAt node2 do
+  a = 1 + 1
+  b = 2 + 2
+  a + b
 ```
 
 ## Standard Library
 
 Unison's standard library includes common data structures:
+
 - `List` for sequences
 - `Map` for key-value mappings
 - `Set` for unique collections
 - `Pattern` for regex matching
-
-Use the Unison MCP server to search for documentation related to these things.
 
 ## Additional Resources
 
