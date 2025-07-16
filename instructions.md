@@ -5,9 +5,10 @@ Please follow the [Unison Programming Language Guide](./unison-language-guide.md
 To assist me with writing code, you'll operate in one of three modes:
 
 * The DISCOVERY mode is used when searching for libraries on Unison Share that may be helpful for a task.
-* The LEARNING mode is for familiarizing yourself with a library or codebase, in preparation for writing or editing code or answering questions about the library. If I ask you to learn about a library or familiarize yourself with it, use this mode. You can also choose to dynamically enter this mode as part of a coding task, if you find you are unfamiliar with 
+* The LEARN mode is for familiarizing yourself with a library or codebase, in preparation for writing or editing code or answering questions about the library. If I ask you to learn about a library or familiarize yourself with it, use this mode. You can also choose to dynamically enter this mode as part of a coding task, if you find you are unfamiliar with 
 * The BASIC mode is for somewhat narrow, small, or well-defined tasks. For these, use the BASIC mode instructions, defined below.
 * The DEEP WORK mode is for tasks which may involve a fair amount of code and which are not well defined. For these, follow the DEEP WORK mode instructions below.
+* The DOCUMENTING mode is for adding documentation to code
 
 ## DISCOVERY mode instructions
 
@@ -212,14 +213,232 @@ List.reverse = foldLeft (acc a -> a +: acc) []
 
 This will print out `[3,2,1]` for that watch expression.
 
+## DOCUMENTING mode
+
+You will use this mode to add good documentation for a definition. After you've written code for me, you may ask me if I'd like you to add documentation, but you should not enter this mode without my consent.
+
+### DOCUMENTING pure functions
+
+To add documentation for a function that doesn't do I/O, `foo`, define a function `foo.doc` using the documentation syntax. Here is an example of good documentation:
+
+      List.take.doc = {{
+
+      ``List.take n list`` returns a list of the first `n` elements of `list`. For example:
+
+      ```
+      List.take 2 [1,2,3,4]
+      ```
+
+      A {List.take} of `0` elements returns the empty list:
+
+      ```
+      List.take 0 [1,2,3,4]
+      ```
+
+      A {List.take} of more elements than exist returns the original list:
+
+      ```
+      List.take 10000 [1,2,3,4]
+      ```
+
+      *Also see:* {List.drop}, {List.takeWhile}, {List.dropWhile}
+
+      # Implementation notes
+
+      The implementation takes `O(log n)`, using the finger tree structure
+      of the {type List} type.
+
+      }}
+
+It should go immediately before the function it is documenting in the scratch file
+
+So it includes:
+
+1. A double backticked inline example, ``List.take n list`` which introduces variables referenced in the short description.
+2. The short description ends with "For example:" 
+3. Then one or more examples, first showing normal usage, then any relevant corner cases. If needed, include any short commentary to clarify, but where possible, let the example speak for itself. Do not give the expected output. The rendered version of the documentation will show the examples along with their evaluated results.
+4. Then a short *Also see:* list, linking to other relevant functions. Only link to functions that actually exist; the documentation will be typechecked to ensure these links are valid.
+5. Then an (optional) implementation notes section, which may include:
+   * (Optional) The big-O notation for the asymptotics (generally only include this for core data structure functions, or implementations of algorithms where the user is likely to be wondering about the asymptotic performance)
+   * (Optional) Any performance considerations to be aware of when using it.
+   * (Optional) Any interesting tricks or surprises about how it's implemented. If the function is straightforward, leave this out.
+
+You can use the MCP server to view the source of existing docs and get a sense of the syntax. Here are a few examples to look at, if you haven't already done so:
+
+* docs List.filterMap
+* docs List.drop
+* view-definitions List.filterMap.doc List.map.doc List.doc Random.doc
+
+### DOCUMENTING functions that do I/O 
+
+Functions that use I/O cannot be evaluated inside of a documentation block, but you can still include a typechecked example showing usage. There are a couple modes you can use:
+
+* Simple mode, if the function's usage is straightforward
+* Complicated mode, if it's not straightforward and a more detailed example would be clearer
+
+#### DOCUMENTING I/O functions, simple mode
+
+Use a `@typechecked` block, but otherwise document things the same as you would any pure function. Here's an example, documenting the `printLine` function:
+
+      IO.console.printLine.doc = {{
+
+      ``printLine msg`` prints `msg` to standard out, with a newline at the end. For example:
+
+      @typechecked ```
+      printLine "Hello, world! 👋"
+      printLine "Goodbye, world! 👋"
+      ```
+      
+      *Also see:* {Handle.putText}, {Handle.stdOut}
+
+      # Implementation notes
+
+      If multiple threads are writing to {Handle.stdOut} concurrently, 
+      you may see interleaving of output.
+
+      }}
+
+#### DOCUMENTING I/O functions, complicated mode
+
+Use this mode for functions whose usage is less straightforward and would benefit from a worked example.
+
+1. To document the function `frobnicate` which does I/O, create a definition `frobnicate.doc.example`, of type `'{IO, Exception} a` for some `a` (often `()`). This example should be self-contained so the user can try running it.
+2. Instead of using a `@typechecked` block, use a `@source{frobnicate.doc.example}` block to show the source of the example, or `@foldedSource{frobnicate.doc.example}` if it's very long and you want it to be collapsed initially in the rendered version. 
+3. Include a line instructing the user on how to run it, and show the output.
+
+Here's an example:
+
+      IO.console.printLine.doc.example = do 
+         printLine "What is your name? \n> "
+         name = readLine()
+         printLine ("Hello there, " ++ name)
+        
+      IO.console.printLine.doc = {{
+
+      ``printLine msg`` prints `msg` to standard out, with a newline at the end. For example:
+
+      @source{IO.console.printLine.doc.example}
+      
+      You can run this in UCM via `run IO.console.printLine.doc.example`, and it produces
+      the output:
+
+      ```raw
+      What is your name? 
+      > Alice
+      Hello there, Alice
+      ```
+      
+      *Also see:* {Handle.putText}, {Handle.stdOut}
+
+      # Implementation notes
+
+      If multiple threads are writing to {Handle.stdOut} concurrently, 
+      you may see interleaving of output.
+
+      }}
+
+If the output type of the example is a more interesting type than just `()`, use a `@typechecked` block for showing the output, so that it renders as hyperlinked code. For example:
+
+     myLibrary.readFromFile : FilePath ->{IO,Exception} Map Text [Nat]
+     
+     myLibrary.readFromFile path = ... -- elided
+
+     myLibrary.readFromFile.doc = {{
+     
+     ``readFromFile path`` reads the transmogrification parameters from the given `path`.
+
+     @source{myLibrary.readFromFile.doc.example}
+
+     When run in UCM via `run myLibrary.readFromFile.doc.example`, this produces output like:
+
+     @typechecked ```
+     Map.fromList [
+       ("Alice", [1,2,3]),
+       ("Bob", [3,2,1]),
+       ("Carol", [0,1,0])
+     ]
+     ```
+     }}
+
+### DOCUMENTING types or abilities
+
+Documenting types or abilities is a bit different. You should strive to give an overview of the type and the typical functions used for interacting with it. Try to give a brief overview, then more detailed sections as needed.
+
+If you haven't already done so, you can use the MCP server to take a look at a few examples using `view-definitions List.doc Random.doc Bytes.doc`.
+
+Not all types need this much documentation, but you can use these as inspiration.
+
+### DOCUMENTATION RULES
+
+* When referencing another definition, use a proper term link, like {List.map} or {Bar.qux}. This will turn into a hyperlink when rendering. Do NOT just include a backticked reference like `Bar.quaffle`, since that will just show up as monospaced font, without a link to the source code of that definition.
+* When referencing a data type or ability, use a type link, as in: {type Map} or {type Random} or {type List}. This will turn into a hyperlink when rendering. Do NOT just include a backticked reference like `Map`.
+* If it's useful to include type parameters when referencing a type, you can use {type Map} `k v` so that at least the `Map` part renders as a clickable hyperlink.
+
+## REQUIREMENT: do a code cleanup pass.
+
+After writing code that typechecks, do a cleanup pass.
+
+### Remove needless `use` clauses and/or shorten them
+
+If a suffix is unique, you don't need to import or write out the fully qualified name. You can just use the unique suffix without imports.
+
+NOT PREFERRED: 
+
+```
+badCode = do 
+  use lib.systemfw_volturno_0_8_0.Blah frobnicate 
+  frobnicate 42 
+```
+
+PREFERRED:
+
+```
+badCode = do 
+  Blah.frobnicate 42 
+```
+
+Only if you are referencing `Blah.frobnicate` a few times in the block should you bother with an import statement, and even then, try to avoid mentioning the library version number unless there are multiple definitions whose fully qualified name ends in `Blah.frobnicate`
+
+For instance, this is okay, since `Blah.frobnicate` is being referenced several times:
+
+```
+okayCode = do
+  use Blah frobnicate
+  frobnicate 1
+  frobnicate 2
+  frobnicate 19
+```
+
+### Consider eta-reducing functions
+
+If a function's last argument is immediately passed as the argument to another function, you can optionally eta-reduce:
+
+BEFORE eta-reducing:
+
+```
+Nat.sum xs = List.foldLeft 0 (+) xs
+```
+
+AFTER eta-reducing:
+
+```
+Nat.sum = List.foldLeft 0 (+)
+```
+
+If a function's implementation is a single function call like this, I like to eta-reduce. If the function declares multiple bindings or is more than a handful of lines or so, I avoid it.
+
 ## REQUIREMENTS: you must output the code you've written, and that code must typecheck
 
 ANYTIME you write code on my behalf, it needs to go to a file (you may suggest a file name), or as an artifact that I can copy/paste into a file, or if it is short, shown to me onscreen.
 
 The code you show me / output to the file / produce as an artifact MUST typecheck. 
 
-That is: you will first typecheck the code, then output it VERBATIM.
+That is: you will first typecheck the COMPLETE code AND TESTS AND (if applicable) DOCUMENTATION, then output it VERBATIM.
 
 You will never output code that has not been typechecked.
 
-To be clear, you are not done just because the code typechecks: that code must be shown to me, put in a file, or produced as an artifact so that I can use it. I cannot easily see the tool call invocations and the code there is not well-formatted for human consumption.
+You will never output test> watch expressions unless they have been typechecked.
+
+You will never output documentation that has not been typechecked.
+
+To be clear, you are not done just because the code typechecks: that complete code must be shown to me, put in a file, or produced as an artifact so that I can use it. I cannot easily see the tool call invocations and the code there is not well-formatted for human consumption.
