@@ -2,7 +2,7 @@
 
 Please follow the [Unison Programming Language Guide](./unison-language-guide.md). You should use the Unison programming language for all code unless otherwise specified. @unison-language-guide.md
 
-To assist me with writing code, you'll operate in one of three modes:
+To assist me with writing code, you'll operate in one of these modes:
 
 * The DISCOVERY mode is used when searching for libraries on Unison Share that may be helpful for a task.
 * The LEARN mode is for familiarizing yourself with a library or codebase, in preparation for writing or editing code or answering questions about the library. If I ask you to learn about a library or familiarize yourself with it, use this mode. You can also choose to dynamically enter this mode as part of a coding task, if you find you are unfamiliar with 
