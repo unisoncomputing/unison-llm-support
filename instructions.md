@@ -12,11 +12,21 @@ To assist me with writing code, you'll operate in one of these modes:
 
 Whenever entering a mode, tell me on its own line one of:
 
-* 🔍 Switching to DISCOVERY mode.
-* ‍🐣 Switching to BASIC mode.
-* 🧑‍🎓 Switching to LEARN mode.
-* 🧠 Switching to DEEP WORK mode.
-* 📝 Switching to DOCUMENTING mode.
+- 🔍 Switching to DISCOVERY mode.
+- ‍🐣 Switching to BASIC mode.
+- 🧑‍🎓 Switching to LEARN mode.
+- 🧠 Switching to DEEP WORK mode.
+- 📝 Switching to DOCUMENTING mode.
+
+## WHERE TO PUT CODE and how to typecheck it
+
+Any time you are writing code, place it in a scratch file, `foo.u` (pick an appropriate file name based on the task). 
+
+As you are iterating, directly edit the file you've created. Use the MCP server to typecheck the file and run test> watch expressions. Do not pass large strings to the Unison MCP typechecking command.
+
+You can show me excerpts of the scratch file as needed when asking me for help or for review.
+
+You should typecheck the scratch file regularly as you are working to make sure the code that you're producing is valid. You are not fininished with a task until the scratch file you are working on compiles. 
 
 ## DISCOVERY mode instructions
 
@@ -210,7 +220,7 @@ As you're trying to implement something, you can use the MCP server to look up d
 
 ### Using watch expressions effectively
 
-You can also use watch expressions to interactively explore and understand how functions behave. You should feel free to add watch expressions temporarily to the file, either to informally test something that you've written, or to see how an existing function behaves. A watch expression is a line starting with `>`. It will be printed out along with any typechecking output. Here's an example:
+You can also use watch expressions to interactively explore and understand how functions behave. You should feel free to add watch expressions temporarily to the file, to see how an existing function behaves. A watch expression is a line starting with `>`. It will be printed out along with any typechecking output. Here's an example:
 
 ```
 List.reverse = foldLeft (acc a -> a +: acc) []
@@ -220,6 +230,8 @@ List.reverse = foldLeft (acc a -> a +: acc) []
 ```
 
 This will print out `[3,2,1]` for that watch expression.
+
+Do NOT use this for tests. Tests should always be test> watch expressions.
 
 ## DOCUMENTING mode
 
@@ -437,14 +449,8 @@ If a function's implementation is a single function call like this, I like to et
 
 ## REQUIREMENTS: you must output the code you've written, and that code must typecheck
 
-ANYTIME you write code on my behalf, it needs to go to a file (you may suggest a file name), or as an artifact that I can copy/paste into a file, or if it is short, shown to me onscreen.
+ANYTIME you write code on my behalf, it needs to be in a scratch file (you may suggest a file name). This file must be typechecked with the Unison MCP server.
 
-The code you show me / output to the file / produce as an artifact MUST typecheck. 
-
-That is: you will first typecheck the COMPLETE code AND TESTS, then output it VERBATIM.
-
-You will never output code that has not been typechecked.
+You are not done with a task if the scratch file you've created and edited has not been typechecked. 
 
 You will never output test> watch expressions unless they have been typechecked.
-
-To be clear, you are not done just because the code typechecks: that complete code must be shown to me, put in a file, or produced as an artifact so that I can use it. I cannot easily see the tool call invocations and the code there is not well-formatted for human consumption.
