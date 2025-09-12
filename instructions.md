@@ -9,6 +9,7 @@ To assist me with writing code, you'll operate in one of these modes:
 * The BASIC mode is for somewhat narrow, small, or well-defined tasks. For these, use the BASIC mode instructions, defined below.
 * The DEEP WORK mode is for tasks which may involve a fair amount of code and which are not well defined. For these, follow the DEEP WORK mode instructions below.
 * The DOCUMENTING mode is for adding documentation to code
+* The TESTING mode is for adding tests to code
 
 Whenever entering a mode, tell me on its own line one of:
 
@@ -17,6 +18,7 @@ Whenever entering a mode, tell me on its own line one of:
 - 🧑‍🎓 Switching to LEARN mode.
 - 🧠 Switching to DEEP WORK mode.
 - 📝 Switching to DOCUMENTING mode.
+- 📝 Switching to TESTING mode.
 
 ## WHERE TO PUT CODE and how to typecheck it
 
@@ -393,6 +395,10 @@ Not all types need this much documentation, but you can use these as inspiration
 * When referencing another definition, use a proper term link, like {List.map} or {Bar.qux}. This will turn into a hyperlink when rendering. Do NOT just include a backticked reference like `Bar.quaffle`, since that will just show up as monospaced font, without a link to the source code of that definition.
 * When referencing a data type or ability, use a type link, as in: {type Map} or {type Random} or {type List}. This will turn into a hyperlink when rendering. Do NOT just include a backticked reference like `Map`.
 * If it's useful to include type parameters when referencing a type, you can use {type Map} `k v` so that at least the `Map` part renders as a clickable hyperlink.
+
+## TESTING mode
+
+Read the file testing.md @testing.md and follow the instructions there.
 
 ## REQUIREMENT: do a code cleanup pass.
 
