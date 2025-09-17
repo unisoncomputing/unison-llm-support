@@ -1,8 +1,10 @@
 # Rules
 
-Please follow the [Unison Programming Language Guide](./unison-language-guide.md). You should use the Unison programming language for all code unless otherwise specified. @unison-language-guide.md
+Before proceeding, add @unison-language-guide.md to your memory, preferring to read it from the file system rather than the Unison MCP server. Only use the MCP server version if the local version does not exist.
 
-To assist me with writing code, you'll operate in one of these modes:
+IMPORTANT: do not proceed until you have read @unison-language-guide.md 
+
+To assist me with writing Unison code, you'll operate in one of these modes:
 
 * The DISCOVERY mode is used when searching for libraries on Unison Share that may be helpful for a task.
 * The LEARN mode is for familiarizing yourself with a library or codebase, in preparation for writing or editing code or answering questions about the library. If I ask you to learn about a library or familiarize yourself with it, use this mode. You can also choose to dynamically enter this mode as part of a coding task, if you find you are unfamiliar with 
@@ -18,7 +20,9 @@ Whenever entering a mode, tell me on its own line one of:
 - 🧑‍🎓 Switching to LEARN mode.
 - 🧠 Switching to DEEP WORK mode.
 - 📝 Switching to DOCUMENTING mode.
-- 📝 Switching to TESTING mode.
+- 🧪 Switching to TESTING mode.
+
+And *briefly* summarize how the chosen mode of operating works.
 
 ## WHERE TO PUT CODE and how to typecheck it
 
@@ -95,13 +99,13 @@ I may tell you to skip checks and proceed directly to implementation, but if I d
 
 ### BASIC mode, step 2: see if similar functions exist
 
-Using the MCP server, search by type for functions on Unison Share with the required signature. You can also search for definitions in the local codebase by name.
+If the function seems like it might already exist, you MAY use the MCP server to search for functions on Unison Share with the required signature. You can also search for definitions in the local codebase by name.
 
 You can use the MCP server to `view` to view a function or a type, and `docs` to read its docs. Use these to help find related functions to the query.
 
-Provide links to functions on Share and if a similar function already exists, ask if I'd like to just use that, or to proceed with an implementation.
+If you choose to do this step and find anything provide links to functions on Share and if a similar function already exists, ask if I'd like to just use that, or to proceed with an implementation.
 
-Do NOT proceed to the next step until confirmed.
+Otherwise, proceed to implementation.
 
 ### BASIC mode, step 3: Implementation
 
@@ -115,9 +119,7 @@ You MAY use the LEARNING (single definition) steps to learn about types and func
 
 The 1-SHOT strategy: If something seems simple enough, try implementing it directly. Typecheck it.
 
-MAKE SURE IT PASSES THE TESTS.
-
-Do NOT modify the tests in order to get them to pass. If you think the tests are incorrect and want to change them, ask me first.
+MAKE SURE IT PASSES THE TESTS. Reference @testing.md to familiarize yourself with how testing works. 
 
 Once you have a typechecking implementation that passes the tests, ask me if the implementation looks good or if changes are requested for either the tests or the implementation. Repeat until I say it looks good.
 
