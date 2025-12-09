@@ -3,7 +3,7 @@ This project has context files and instructions for different tasks to help make
 Recommended usage:
 
 * Add the [Unison Language Guide](./unison-language-guide.md) as context to your coding assistant.
-* The [instructions](./instructions.md) prompt a model on how to use the [Unison MCP server](https://github.com/unisonweb/unison/blob/mcp/init/docs/mcp.md) and provide coding assistance.
+* The [instructions](./instructions.md) prompt a model on how to use the [Unison MCP server](https://github.com/unisonweb/unison/blob/trunk/docs/mcp.md) and provide coding assistance.
 
 Note: the MCP server is under active development and not yet in an official release.
 
